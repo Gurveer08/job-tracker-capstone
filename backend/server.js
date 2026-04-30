@@ -26,16 +26,45 @@ app.get("/api/health", async (req, res) => {
   }
 });
 
+// Dashboard stats endpoint. Queries the database directly 
+// for counts used by the frontend dashboard.
 app.get("/api/dashboard/stats", async (req, res) => {
   try {
-    // Temporary starter values
+
+    // COUNT(*) counts every row in the specificed table (Jobs, Contacts, Skills)
+    // [[DoubleDestructring]] used to simplify the result from mysql2, which returns an array of rows. 
+    // We only need the first row, which contains the count.
+    const [[totalApplications]] = await db.query(
+      "SELECT COUNT(*) AS count FROM Jobs"
+    );
+
+    const [[interviews]] = await db.query(
+      "SELECT COUNT(*) AS count FROM Jobs WHERE job_status = 'Interviewing'"
+    );
+
+    const [[offers]] = await db.query(
+      "SELECT COUNT(*) AS count FROM Jobs WHERE job_status = 'Offer'"
+    );
+
+    const [[rejections]] = await db.query(
+      "SELECT COUNT(*) AS count FROM Jobs WHERE job_status = 'Rejected'"
+    );
+
+    const [[contacts]] = await db.query(
+      "SELECT COUNT(*) AS count FROM Contacts"
+    );
+
+    const [[skillsTracked]] = await db.query(
+      "SELECT COUNT(*) AS count FROM Skills"
+    );
+
     res.json({
-      totalApplications: 0,
-      interviews: 0,
-      offers: 0,
-      rejections: 0,
-      contacts: 0,
-      skillsTracked: 0,
+      totalApplications: totalApplications.count,
+      interviews: interviews.count,
+      offers: offers.count,
+      rejections: rejections.count,
+      contacts: contacts.count,
+      skillsTracked: skillsTracked.count,
     });
   } catch (err) {
     console.error("Dashboard stats error:", err.message);
