@@ -1,13 +1,51 @@
+{/* Add React Hook */}
+import { useEffect, useState } from "react";
 import Navbar from "../components/NavBar";
 
 function Dashboard() {
   const userName = "User Name";
+
+  const [stats, setStats] = useState({
+    totalApplications: 0,
+    interviews: 0,
+    offers: 0,
+    rejections: 0,
+    contacts: 0,
+    skillsTracked: 0,
+  });
+
+  {/* Add loading and error states */}
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const applications = [
     { company: "Google Internship", status: "Interviewing" },
     { company: "Amazon SWE Intern", status: "Applied" },
     { company: "Meta Internship", status: "Rejected" },
   ];
+
+  {/* Add the backend API call */}
+  useEffect(() => {
+    async function fetchDashboardStats() {
+      try {
+        const response = await fetch("http://localhost:3000/api/dashboard/stats");
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch dashboard stats");
+        }
+
+        const data = await response.json();
+        setStats(data);
+      } catch (err) {
+        console.error("Dashboard stats error:", err);
+        setError("Could not load dashboard stats.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchDashboardStats();
+  }, []);
 
   return (
     <div style={styles.container}>
@@ -18,9 +56,17 @@ function Dashboard() {
       {/* Applications Summary */}
       <div style={styles.card}>
         <h2>Applications Summary</h2>
-        <p style={styles.summaryText}>
-          Applied: <b>12</b> | Interviewing: <b>3</b> | Offers: <b>1</b>
-        </p>
+
+        {loading ? (
+          <p style={styles.summaryText}>Loading dashboard stats...</p>
+        ) : error ? (
+          <p style={styles.errorText}>{error}</p>
+        ) : (
+          <p style={styles.summaryText}>
+            Applied: <b>{stats.totalApplications}</b> | Interviewing:{" "}
+            <b>{stats.interviews}</b> | Offers: <b>{stats.offers}</b>
+          </p>
+        )}
       </div>
 
       {/* Recent Applications */}
@@ -78,6 +124,10 @@ const styles = {
   },
   summaryText: {
     fontSize: "16px",
+  },
+  errorText: {
+    fontSize: "16px",
+    color: "crimson",
   },
   list: {
     listStyle: "none",
