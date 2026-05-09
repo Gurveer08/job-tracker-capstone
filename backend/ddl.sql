@@ -26,8 +26,8 @@ CREATE TABLE IF NOT EXISTS `Jobs` (
     `job_date_applied` DATE NOT NULL,
     /* start with most beginning option, can change later */
     `job_status` ENUM('Applied', 'Interviewing', 'Waiting', 'Offer', 'Rejected') NOT NULL DEFAULT 'Applied',
-    /* notes may not be needed? may want to make TEXT to have unlimited characters? */
-    `job_notes` VARCHAR(255) NULL,
+    /* put TEXT to have unlimited characters instead of VARCHAR(255) as per Gurveer's suggestion */
+    `job_notes` TEXT NULL,
     PRIMARY KEY (`job_id`),
     CONSTRAINT `fk_jobs_user_id`
         FOREIGN KEY (`user_id`)
@@ -47,6 +47,9 @@ CREATE TABLE IF NOT EXISTS `Skills` (
         REFERENCES `Users` (`user_id`)
         ON DELETE CASCADE
         ON UPDATE CASCADE);
+    /* unique added per Gurveer's comment about user_id and skill_name 
+    so dups can't be made for skill_name */
+    UNIQUE (`user_id`, `skill_name`)
 
 /* Main many-to-many table */
 CREATE TABLE IF NOT EXISTS `Jobs_Skills` (
