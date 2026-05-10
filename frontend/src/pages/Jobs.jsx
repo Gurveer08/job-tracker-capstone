@@ -31,7 +31,7 @@ export default function Jobs() {
       <h1>Job Applications</h1>
 
       {/* Form */}
-      <div style={styles.form}>
+      <div className="jobsForm" style={styles.form}>
         <input
           type="text"
           placeholder="Company"
@@ -88,10 +88,16 @@ export default function Jobs() {
 }
 
 const styles = {
-  container: {
-    padding: "20px",
-    color: "#333",
-  },
+    container: {
+        padding: "20px",
+        color: "#333",
+      
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      
+        minHeight: "100vh",
+      },
   form: {
     display: "flex",
     flexDirection: "column",
@@ -110,10 +116,15 @@ const styles = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
+  
     padding: "12px",
     marginBottom: "10px",
+  
     backgroundColor: "#f2f2f2",
+  
     width: "400px",
+  
+    borderRadius: "10px",
   },
   status: {
     display: "inline-block",
