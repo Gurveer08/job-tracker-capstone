@@ -1,51 +1,56 @@
-{/* Add React Hook */}
-import { useEffect, useState } from "react";
+import { useState, useMemo } from "react";
 import Navbar from "../components/NavBar";
 
 function Dashboard() {
   const userName = "User Name";
 
-  const [stats, setStats] = useState({
-    totalApplications: 0,
-    interviews: 0,
-    offers: 0,
-    rejections: 0,
-    contacts: 0,
-    skillsTracked: 0,
-  });
+  const [applications, setApplications] = useState([
+    { id: 1, company: "Google Internship", status: "Interviewing" },
+    { id: 2, company: "Amazon SWE Intern", status: "Applied" },
+    { id: 3, company: "Meta Internship", status: "Rejected" },
+  ]);
 
-  {/* Add loading and error states */}
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [company, setCompany] = useState("");
+  const [status, setStatus] = useState("Applied");
+  const [filter, setFilter] = useState("All");
 
-  const applications = [
-    { company: "Google Internship", status: "Interviewing" },
-    { company: "Amazon SWE Intern", status: "Applied" },
-    { company: "Meta Internship", status: "Rejected" },
-  ];
+  // Add new application
+  const handleAddJob = () => {
+    if (company.trim() === "") return;
 
-  {/* Add the backend API call */}
-  useEffect(() => {
-    async function fetchDashboardStats() {
-      try {
-        const response = await fetch("http://localhost:3000/api/dashboard/stats");
+    const newJob = {
+      id: Date.now(),
+      company,
+      status,
+    };
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch dashboard stats");
-        }
+    setApplications([...applications, newJob]);
+    setCompany("");
+    setStatus("Applied");
+  };
 
-        const data = await response.json();
-        setStats(data);
-      } catch (err) {
-        console.error("Dashboard stats error:", err);
-        setError("Could not load dashboard stats.");
-      } finally {
-        setLoading(false);
-      }
-    }
+  // Delete application
+  const handleDelete = (id) => {
+    setApplications(applications.filter((job) => job.id !== id));
+  };
 
-    fetchDashboardStats();
-  }, []);
+  // Filtered applications
+  const filteredApplications = useMemo(() => {
+    if (filter === "All") return applications;
+    return applications.filter((job) => job.status === filter);
+  }, [applications, filter]);
+
+  // Dynamic summary counts
+  const summary = useMemo(() => {
+    return {
+      applied: applications.filter((job) => job.status === "Applied").length,
+      interviewing: applications.filter(
+        (job) => job.status === "Interviewing"
+      ).length,
+      rejected: applications.filter((job) => job.status === "Rejected").length,
+      offers: applications.filter((job) => job.status === "Offer").length,
+    };
+  }, [applications]);
 
   return (
     <div style={styles.container}>
@@ -55,17 +60,11 @@ function Dashboard() {
       {/* Summary */}
       <div style={styles.card}>
         <h2>Applications Summary</h2>
-
-        {loading ? (
-          <p style={styles.summaryText}>Loading dashboard stats...</p>
-        ) : error ? (
-          <p style={styles.errorText}>{error}</p>
-        ) : (
-          <p style={styles.summaryText}>
-            Applied: <b>{stats.totalApplications}</b> | Interviewing:{" "}
-            <b>{stats.interviews}</b> | Offers: <b>{stats.offers}</b>
-          </p>
-        )}
+        <p style={styles.summaryText}>
+          Applied: <b>{summary.applied}</b> | Interviewing:{" "}
+          <b>{summary.interviewing}</b> | Rejected: <b>{summary.rejected}</b> |
+          Offers: <b>{summary.offers}</b>
+        </p>
       </div>
 
       {/* Add Job Form */}
@@ -164,10 +163,6 @@ const styles = {
   },
   summaryText: {
     fontSize: "16px",
-  },
-  errorText: {
-    fontSize: "16px",
-    color: "crimson",
   },
   list: {
     listStyle: "none",
