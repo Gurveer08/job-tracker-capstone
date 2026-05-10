@@ -49,11 +49,10 @@ function Dashboard() {
 
   return (
     <div style={styles.container}>
-      {/* Header */}
       <h1 style={styles.title}>Job Tracker Dashboard</h1>
       <h3 style={styles.welcome}>Welcome, {userName}</h3>
 
-      {/* Applications Summary */}
+      {/* Summary */}
       <div style={styles.card}>
         <h2>Applications Summary</h2>
 
@@ -69,32 +68,73 @@ function Dashboard() {
         )}
       </div>
 
-      {/* Recent Applications */}
+      {/* Add Job Form */}
       <div style={styles.card}>
-        <h2>Recent Applications</h2>
+        <h2>Add Application</h2>
+
+        <input
+          type="text"
+          placeholder="Company Name"
+          value={company}
+          onChange={(e) => setCompany(e.target.value)}
+          style={styles.input}
+        />
+
+        <select
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+          style={styles.select}
+        >
+          <option>Applied</option>
+          <option>Interviewing</option>
+          <option>Rejected</option>
+          <option>Offer</option>
+        </select>
+
+        <button style={styles.button} onClick={handleAddJob}>
+          + Add Job
+        </button>
+      </div>
+
+      {/* Filter */}
+      <div style={styles.card}>
+        <h2>Filter Applications</h2>
+
+        <select
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          style={styles.select}
+        >
+          <option>All</option>
+          <option>Applied</option>
+          <option>Interviewing</option>
+          <option>Rejected</option>
+          <option>Offer</option>
+        </select>
+      </div>
+
+      {/* Applications List */}
+      <div style={styles.card}>
+        <h2>Applications</h2>
 
         <ul style={styles.list}>
-          {applications.map((app, index) => (
-            <li key={index} style={styles.listItem}>
-              <span>{app.company}</span>
-              <span style={styles.status}>{app.status}</span>
+          {filteredApplications.map((job) => (
+            <li key={job.id} style={styles.listItem}>
+              <div>
+                <strong>{job.company}</strong> - {job.status}
+              </div>
+
+              <button
+                style={styles.deleteButton}
+                onClick={() => handleDelete(job.id)}
+              >
+                Delete
+              </button>
             </li>
           ))}
         </ul>
       </div>
 
-      {/* Quick Actions */}
-      <div style={styles.card}>
-        <h2>Quick Actions</h2>
-
-        <div style={styles.buttonRow}>
-          <button style={styles.button}>+ Add Job</button>
-          <button style={styles.button}>+ Add Skill</button>
-          <button style={styles.button}>+ Add Contact</button>
-        </div>
-      </div>
-
-      {/* Navigation */}
       <Navbar />
     </div>
   );
@@ -111,7 +151,7 @@ const styles = {
     marginBottom: "5px",
   },
   welcome: {
-    marginTop: "0",
+    marginTop: 0,
     marginBottom: "20px",
     color: "#555",
   },
@@ -136,17 +176,20 @@ const styles = {
   listItem: {
     display: "flex",
     justifyContent: "space-between",
-    padding: "8px 0",
+    alignItems: "center",
+    padding: "10px 0",
     borderBottom: "1px solid #eee",
   },
-  status: {
-    fontWeight: "bold",
-    color: "#333",
+  input: {
+    padding: "10px",
+    marginRight: "10px",
+    marginBottom: "10px",
+    width: "220px",
   },
-  buttonRow: {
-    display: "flex",
-    gap: "10px",
-    flexWrap: "wrap",
+  select: {
+    padding: "10px",
+    marginRight: "10px",
+    marginBottom: "10px",
   },
   button: {
     padding: "10px",
@@ -154,6 +197,14 @@ const styles = {
     borderRadius: "6px",
     cursor: "pointer",
     backgroundColor: "#333",
+    color: "white",
+  },
+  deleteButton: {
+    padding: "8px",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer",
+    backgroundColor: "crimson",
     color: "white",
   },
 };
