@@ -14,7 +14,6 @@ function Dashboard() {
   const [status, setStatus] = useState("Applied");
   const [filter, setFilter] = useState("All");
 
-  // Add new application
   const handleAddJob = () => {
     if (company.trim() === "") return;
 
@@ -29,178 +28,240 @@ function Dashboard() {
     setStatus("Applied");
   };
 
-  // Delete application
   const handleDelete = (id) => {
     setApplications(applications.filter((job) => job.id !== id));
   };
 
-  // Filtered applications
   const filteredApplications = useMemo(() => {
     if (filter === "All") return applications;
     return applications.filter((job) => job.status === filter);
   }, [applications, filter]);
 
-  // Dynamic summary counts
   const summary = useMemo(() => {
     return {
       applied: applications.filter((job) => job.status === "Applied").length,
-      interviewing: applications.filter(
-        (job) => job.status === "Interviewing"
-      ).length,
+      interviewing: applications.filter((job) => job.status === "Interviewing").length,
       rejected: applications.filter((job) => job.status === "Rejected").length,
       offers: applications.filter((job) => job.status === "Offer").length,
     };
   }, [applications]);
 
+  const getStatusStyle = (status) => {
+    const base = {
+      padding: "4px 10px",
+      borderRadius: "999px",
+      fontSize: "12px",
+      fontWeight: "600",
+    };
+
+    switch (status) {
+      case "Applied":
+        return { ...base, background: "#dbeafe", color: "#1d4ed8" };
+      case "Interviewing":
+        return { ...base, background: "#fef9c3", color: "#854d0e" };
+      case "Rejected":
+        return { ...base, background: "#fee2e2", color: "#991b1b" };
+      case "Offer":
+        return { ...base, background: "#dcfce7", color: "#166534" };
+      default:
+        return base;
+    }
+  };
+
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>Job Tracker Dashboard</h1>
-      <h3 style={styles.welcome}>Welcome, {userName}</h3>
+    <div style={styles.page}>
+      <div style={styles.container}>
 
-      {/* Summary */}
-      <div style={styles.card}>
-        <h2>Applications Summary</h2>
-        <p style={styles.summaryText}>
-          Applied: <b>{summary.applied}</b> | Interviewing:{" "}
-          <b>{summary.interviewing}</b> | Rejected: <b>{summary.rejected}</b> |
-          Offers: <b>{summary.offers}</b>
-        </p>
-      </div>
+        {/* HEADER */}
+        <div style={styles.header}>
+          <h1 style={styles.title}>Job Tracker</h1>
+          <p style={styles.subtext}>Welcome back, {userName}</p>
+        </div>
 
-      {/* Add Job Form */}
-      <div style={styles.card}>
-        <h2>Add Application</h2>
+        {/* SUMMARY CARDS */}
+        <div style={styles.summaryGrid}>
+          <div style={styles.summaryCard}>Applied<br /><b>{summary.applied}</b></div>
+          <div style={styles.summaryCard}>Interviewing<br /><b>{summary.interviewing}</b></div>
+          <div style={styles.summaryCard}>Rejected<br /><b>{summary.rejected}</b></div>
+          <div style={styles.summaryCard}>Offers<br /><b>{summary.offers}</b></div>
+        </div>
 
-        <input
-          type="text"
-          placeholder="Company Name"
-          value={company}
-          onChange={(e) => setCompany(e.target.value)}
-          style={styles.input}
-        />
+        {/* ADD JOB */}
+        <div style={styles.card}>
+          <h2>Add Application</h2>
 
-        <select
-          value={status}
-          onChange={(e) => setStatus(e.target.value)}
-          style={styles.select}
-        >
-          <option>Applied</option>
-          <option>Interviewing</option>
-          <option>Rejected</option>
-          <option>Offer</option>
-        </select>
+          <div style={styles.row}>
+            <input
+              placeholder="Company Name"
+              value={company}
+              onChange={(e) => setCompany(e.target.value)}
+              style={styles.input}
+            />
 
-        <button style={styles.button} onClick={handleAddJob}>
-          + Add Job
-        </button>
-      </div>
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              style={styles.select}
+            >
+              <option>Applied</option>
+              <option>Interviewing</option>
+              <option>Rejected</option>
+              <option>Offer</option>
+            </select>
 
-      {/* Filter */}
-      <div style={styles.card}>
-        <h2>Filter Applications</h2>
+            <button style={styles.addButton} onClick={handleAddJob}>
+              Add +
+            </button>
+          </div>
+        </div>
 
-        <select
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-          style={styles.select}
-        >
-          <option>All</option>
-          <option>Applied</option>
-          <option>Interviewing</option>
-          <option>Rejected</option>
-          <option>Offer</option>
-        </select>
-      </div>
+        {/* FILTER */}
+        <div style={styles.card}>
+          <h2>Filter</h2>
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            style={styles.select}
+          >
+            <option>All</option>
+            <option>Applied</option>
+            <option>Interviewing</option>
+            <option>Rejected</option>
+            <option>Offer</option>
+          </select>
+        </div>
 
-      {/* Applications List */}
-      <div style={styles.card}>
-        <h2>Applications</h2>
+        {/* LIST */}
+        <div style={styles.card}>
+          <h2>Applications</h2>
 
-        <ul style={styles.list}>
-          {filteredApplications.map((job) => (
-            <li key={job.id} style={styles.listItem}>
-              <div>
-                <strong>{job.company}</strong> - {job.status}
+          <div>
+            {filteredApplications.map((job) => (
+              <div key={job.id} style={styles.jobRow}>
+                <div>
+                  <div style={styles.company}>{job.company}</div>
+                  <div style={getStatusStyle(job.status)}>{job.status}</div>
+                </div>
+
+                <button
+                  style={styles.deleteButton}
+                  onClick={() => handleDelete(job.id)}
+                >
+                  ✕
+                </button>
               </div>
-
-              <button
-                style={styles.deleteButton}
-                onClick={() => handleDelete(job.id)}
-              >
-                Delete
-              </button>
-            </li>
-          ))}
-        </ul>
+            ))}
+          </div>
+        </div>
       </div>
-
-      <Navbar />
     </div>
   );
 }
 
+/* =========================
+   🎨 REAL VISUAL REDESIGN
+========================= */
 const styles = {
+  page: {
+    minHeight: "100vh",
+    background: "linear-gradient(135deg, #0f172a, #1e293b)",
+    padding: "30px",
+    color: "white",
+  },
+
   container: {
-    padding: "20px",
-    fontFamily: "Arial, sans-serif",
     maxWidth: "900px",
     margin: "0 auto",
   },
-  title: {
-    marginBottom: "5px",
-  },
-  welcome: {
-    marginTop: 0,
+
+  header: {
     marginBottom: "20px",
-    color: "#555",
   },
-  card: {
-    border: "1px solid #ddd",
+
+  title: {
+    fontSize: "34px",
+    margin: 0,
+  },
+
+  subtext: {
+    color: "#cbd5e1",
+    marginTop: "5px",
+  },
+
+  summaryGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(4, 1fr)",
+    gap: "10px",
+    marginBottom: "20px",
+  },
+
+  summaryCard: {
+    background: "#111827",
     padding: "15px",
+    borderRadius: "12px",
+    textAlign: "center",
+  },
+
+  card: {
+    background: "#0b1220",
+    padding: "20px",
+    borderRadius: "14px",
     marginBottom: "15px",
-    borderRadius: "10px",
-    backgroundColor: "#fafafa",
+    boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
   },
-  summaryText: {
-    fontSize: "16px",
+
+  row: {
+    display: "flex",
+    gap: "10px",
+    flexWrap: "wrap",
   },
-  list: {
-    listStyle: "none",
-    padding: 0,
+
+  input: {
+    padding: "10px",
+    borderRadius: "8px",
+    border: "1px solid #334155",
+    background: "#0f172a",
+    color: "white",
+    flex: 1,
   },
-  listItem: {
+
+  select: {
+    padding: "10px",
+    borderRadius: "8px",
+    border: "1px solid #334155",
+    background: "#0f172a",
+    color: "white",
+  },
+
+  addButton: {
+    padding: "10px 14px",
+    borderRadius: "8px",
+    border: "none",
+    background: "#3b82f6",
+    color: "white",
+    cursor: "pointer",
+    fontWeight: "600",
+  },
+
+  jobRow: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: "10px 0",
-    borderBottom: "1px solid #eee",
+    padding: "12px",
+    borderBottom: "1px solid #1f2937",
   },
-  input: {
-    padding: "10px",
-    marginRight: "10px",
-    marginBottom: "10px",
-    width: "220px",
+
+  company: {
+    fontWeight: "600",
+    marginBottom: "5px",
   },
-  select: {
-    padding: "10px",
-    marginRight: "10px",
-    marginBottom: "10px",
-  },
-  button: {
-    padding: "10px",
-    border: "none",
-    borderRadius: "6px",
-    cursor: "pointer",
-    backgroundColor: "#333",
-    color: "white",
-  },
+
   deleteButton: {
-    padding: "8px",
+    background: "transparent",
     border: "none",
-    borderRadius: "6px",
+    color: "#ef4444",
+    fontSize: "18px",
     cursor: "pointer",
-    backgroundColor: "crimson",
-    color: "white",
   },
 };
 
