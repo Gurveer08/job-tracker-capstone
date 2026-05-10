@@ -30,8 +30,7 @@ router.post("/login", async (req, res) => {
     try {
         // destructure rows once since array will be returned
         const [rows] = await db.query(
-            "SELECT * FROM Users WHERE user_email = ?",
-            [user_email]
+            "SELECT * FROM Users WHERE user_email = ?", [user_email]
         );
         // 401=unuathorized
         if (rows.length === 0) {
