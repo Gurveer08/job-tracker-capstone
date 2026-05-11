@@ -7,8 +7,17 @@ const db = require("./config/db");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+const authRoutes = require("./routes/auth");
+const jobRoutes = require("./routes/jobs");
+const skillRoutes = require("./routes/skills");
+const contactRoutes = require("./routes/contacts");
+
 app.use(cors());
 app.use(express.json());
+app.use("/api/auth", authRoutes);
+app.use("/api/jobs", jobRoutes);
+app.use("/api/skills", skillRoutes);
+app.use("/api/contacts", contactRoutes);
 
 
 // Quick sanity check to ensure Job Tracker backend is alive and running
