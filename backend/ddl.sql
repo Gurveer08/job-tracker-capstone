@@ -42,14 +42,14 @@ CREATE TABLE IF NOT EXISTS `Skills` (
     `skill_category` ENUM('Language', 'Framework', 'Tool', 'Database', 'Version Control', 'Cloud Platforms', 'Operating Systems') NOT NULL DEFAULT 'Language',
     `skill_level` ENUM('Beginner', 'Intermediate', 'Advanced') NOT NULL DEFAULT 'Beginner',
     PRIMARY KEY (`skill_id`),
+    /* unique added per Gurveer's comment about user_id and skill_name 
+    so dups can't be made for skill_name */
+    UNIQUE (`user_id`, `skill_name`),
     CONSTRAINT `fk_skills_user_id`
         FOREIGN KEY (`user_id`)
         REFERENCES `Users` (`user_id`)
         ON DELETE CASCADE
         ON UPDATE CASCADE);
-    /* unique added per Gurveer's comment about user_id and skill_name 
-    so dups can't be made for skill_name */
-    UNIQUE (`user_id`, `skill_name`)
 
 /* Main many-to-many table */
 CREATE TABLE IF NOT EXISTS `Jobs_Skills` (
