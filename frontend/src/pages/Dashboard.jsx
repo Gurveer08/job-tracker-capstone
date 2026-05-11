@@ -1,8 +1,22 @@
-import { useState, useMemo } from "react";
+{/* Add React Hook */}
+import { useEffect, useMemo, useState } from "react";
 import Navbar from "../components/NavBar";
 
 function Dashboard() {
   const userName = "User Name";
+
+  const [stats, setStats] = useState({
+    totalApplications: 0,
+    interviews: 0,
+    offers: 0,
+    rejections: 0,
+    contacts: 0,
+    skillsTracked: 0,
+  });
+
+  {/* Add loading and error states */}
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const [applications, setApplications] = useState([
     { id: 1, company: "Google Internship", status: "Interviewing" },
@@ -13,6 +27,29 @@ function Dashboard() {
   const [company, setCompany] = useState("");
   const [status, setStatus] = useState("Applied");
   const [filter, setFilter] = useState("All");
+
+  {/* Add the backend API call */}
+  useEffect(() => {
+    async function fetchDashboardStats() {
+      try {
+        const response = await fetch("http://localhost:3000/api/dashboard/stats");
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch dashboard stats");
+        }
+
+        const data = await response.json();
+        setStats(data);
+      } catch (err) {
+        console.error("Dashboard stats error:", err);
+        setError("Could not load dashboard stats.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchDashboardStats();
+  }, []);
 
   const handleAddJob = () => {
     if (company.trim() === "") return;
@@ -67,6 +104,17 @@ function Dashboard() {
         return base;
     }
   };
+
+  const dashboardStats = error
+    ? {
+        totalApplications: applications.length,
+        interviews: summary.interviewing,
+        offers: summary.offers,
+        rejections: summary.rejected,
+        contacts: 0,
+        skillsTracked: 0,
+      }
+    : stats;
 
   return (
     <div style={styles.page}>
