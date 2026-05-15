@@ -1,4 +1,4 @@
-// middleware auth file created before continuation in navigation of website
+// middleware auth file created before continuation in navigation of website 
 const jwt = require("jsonwebtoken");
 
 // no async since jwt.verify is synchronous

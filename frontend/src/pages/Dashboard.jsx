@@ -113,7 +113,7 @@ function Dashboard() {
 
         {/* HEADER */}
         <div style={styles.header}>
-          <h1 style={styles.title}>Job Tracker</h1>
+          <h1 style={styles.title} style={{ color: "white" }}>Job Tracker</h1>
           <p style={styles.subtext}>Welcome back, {userName}</p>
         </div>
 
@@ -133,7 +133,7 @@ function Dashboard() {
 
         {/* ADD JOB */}
         <div style={styles.card}>
-          <h2>Add Application</h2>
+          <h2 style={{ color: "white" }}>Add Application</h2>
 
           <div style={styles.row}>
             <input
@@ -162,7 +162,7 @@ function Dashboard() {
 
         {/* FILTER */}
         <div style={styles.card}>
-          <h2>Filter</h2>
+          <h2 style={{ color: "white" }}>Filter</h2>
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
@@ -178,7 +178,7 @@ function Dashboard() {
 
         {/* LIST */}
         <div style={styles.card}>
-          <h2>Applications</h2>
+          <h2 style={{ color: "white" }}>Applications</h2>
 
           <div>
             {filteredApplications.map((job) => (
@@ -245,18 +245,21 @@ const styles = {
   },
 
   summaryCard: {
-    background: "#111827",
+    background: "#253550",  // much lighter than before
     padding: "15px",
     borderRadius: "12px",
     textAlign: "center",
+    border: "1px solid #4a5f7a",
   },
 
   card: {
-    background: "#0b1220",
+    background: "#1a2c45",  // much lighter than before
     padding: "20px",
     borderRadius: "14px",
     marginBottom: "15px",
     boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
+    border: "1px solid #2d3f55",
+    color: "white",  // fix the dark heading text
   },
 
   row: {
@@ -268,8 +271,8 @@ const styles = {
   input: {
     padding: "10px",
     borderRadius: "8px",
-    border: "1px solid #334155",
-    background: "#0f172a",
+    border: "1px solid #4a5f7a",  // was #334155, more visible border
+    background: "#1e293b",  // was #0f172a, lighter so it's distinguishable from card
     color: "white",
     flex: 1,
   },
@@ -277,8 +280,8 @@ const styles = {
   select: {
     padding: "10px",
     borderRadius: "8px",
-    border: "1px solid #334155",
-    background: "#0f172a",
+    border: "1px solid #4a5f7a",  // was #334155, matches input
+    background: "#1e293b",  // was #0f172a, matches input
     color: "white",
   },
 
@@ -297,7 +300,7 @@ const styles = {
     justifyContent: "space-between",
     alignItems: "center",
     padding: "12px",
-    borderBottom: "1px solid #1f2937",
+    borderBottom: "1px solid #2d3f55",  // was #1f2937, more visible divider
   },
 
   company: {
