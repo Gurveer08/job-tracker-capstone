@@ -1,4 +1,4 @@
-{/* Add React Hook */}
+// Add React Hook
 import { useEffect, useMemo, useState } from "react";
 import Navbar from "../components/NavBar";
 
@@ -6,7 +6,7 @@ function Dashboard() {
   const userName = "User Name";
 
   const [stats, setStats] = useState({
-    totalApplications: 0,
+    totalApplications: 0,      
     interviews: 0,
     offers: 0,
     rejections: 0,
@@ -14,7 +14,7 @@ function Dashboard() {
     skillsTracked: 0,
   });
 
-  {/* Add loading and error states */}
+  // Add loading and error states
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -28,7 +28,7 @@ function Dashboard() {
   const [status, setStatus] = useState("Applied");
   const [filter, setFilter] = useState("All");
 
-  {/* Add the backend API call */}
+  // Add the backend API call
   useEffect(() => {
     async function fetchDashboardStats() {
       try {
@@ -74,15 +74,6 @@ function Dashboard() {
     return applications.filter((job) => job.status === filter);
   }, [applications, filter]);
 
-  const summary = useMemo(() => {
-    return {
-      applied: applications.filter((job) => job.status === "Applied").length,
-      interviewing: applications.filter((job) => job.status === "Interviewing").length,
-      rejected: applications.filter((job) => job.status === "Rejected").length,
-      offers: applications.filter((job) => job.status === "Offer").length,
-    };
-  }, [applications]);
-
   const getStatusStyle = (status) => {
     const base = {
       padding: "4px 10px",
@@ -126,12 +117,18 @@ function Dashboard() {
           <p style={styles.subtext}>Welcome back, {userName}</p>
         </div>
 
+        {error && (
+          <div style={{ color: "#ef4444", marginBottom: "15px", fontWeight: "bold" }}>
+            {error}
+          </div>
+        )}
+
         {/* SUMMARY CARDS */}
         <div style={styles.summaryGrid}>
-          <div style={styles.summaryCard}>Applied<br /><b>{summary.applied}</b></div>
-          <div style={styles.summaryCard}>Interviewing<br /><b>{summary.interviewing}</b></div>
-          <div style={styles.summaryCard}>Rejected<br /><b>{summary.rejected}</b></div>
-          <div style={styles.summaryCard}>Offers<br /><b>{summary.offers}</b></div>
+          <div style={styles.summaryCard}>Applied<br /><b>{loading ? "..." : stats.totalApplications}</b></div>
+          <div style={styles.summaryCard}>Interviewing<br /><b>{loading ? "..." : stats.interviews}</b></div>
+          <div style={styles.summaryCard}>Rejected<br /><b>{loading ? "..." : stats.rejections}</b></div>
+          <div style={styles.summaryCard}>Offers<br /><b>{loading ? "..." : stats.offers}</b></div>
         </div>
 
         {/* ADD JOB */}
@@ -201,6 +198,10 @@ function Dashboard() {
             ))}
           </div>
         </div>
+        
+        {/* Navigation */}
+        <Navbar />
+
       </div>
     </div>
   );
